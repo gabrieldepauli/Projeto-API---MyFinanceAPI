@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,14 +47,14 @@ public class TransacaoDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Transacao t = new Transacao();
-                    
+
                     t.setId(rs.getInt("id"));
                     t.setDescricao(rs.getString("descricao"));
                     t.setValor(rs.getDouble("valor"));
                     t.setTipo(rs.getString("tipo"));
                     t.setCategoria(rs.getString("categoria"));
-                    t.setData(rs.getDate("data_criacao").toLocalDate());
-                    
+                    t.setData(rs.getObject("data_criacao", LocalDate.class));
+
                     transacoes.add(t);
                 }
             }
@@ -70,7 +71,7 @@ public class TransacaoDAO {
 
             stmt.setInt(1, id);
             int linhasAfetadas = stmt.executeUpdate();
-            
+
             return linhasAfetadas > 0;
         }
     }
@@ -87,13 +88,13 @@ public class TransacaoDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     transacao = new Transacao();
-                    
+
                     transacao.setId(rs.getInt("id"));
                     transacao.setDescricao(rs.getString("descricao"));
                     transacao.setValor(rs.getDouble("valor"));
                     transacao.setTipo(rs.getString("tipo"));
                     transacao.setCategoria(rs.getString("categoria"));
-                    transacao.setData(rs.getDate("data_criacao").toLocalDate());
+                    transacao.setData(rs.getObject("data_criacao", LocalDate.class));
                 }
             }
         }
@@ -113,14 +114,14 @@ public class TransacaoDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Transacao t = new Transacao();
-                    
+
                     t.setId(rs.getInt("id"));
                     t.setDescricao(rs.getString("descricao"));
                     t.setValor(rs.getDouble("valor"));
                     t.setTipo(rs.getString("tipo"));
                     t.setCategoria(rs.getString("categoria"));
-                    t.setData(rs.getDate("data_criacao").toLocalDate());
-                    
+                    t.setData(rs.getObject("data_criacao", LocalDate.class));
+
                     transacoes.add(t);
                 }
             }
@@ -141,14 +142,14 @@ public class TransacaoDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Transacao t = new Transacao();
-                    
+
                     t.setId(rs.getInt("id"));
                     t.setDescricao(rs.getString("descricao"));
                     t.setValor(rs.getDouble("valor"));
                     t.setTipo(rs.getString("tipo"));
                     t.setCategoria(rs.getString("categoria"));
-                    t.setData(rs.getDate("data_criacao").toLocalDate());
-                    
+                    t.setData(rs.getObject("data_criacao", LocalDate.class));
+
                     transacoes.add(t);
                 }
             }
@@ -170,14 +171,14 @@ public class TransacaoDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Transacao t = new Transacao();
-                    
+
                     t.setId(rs.getInt("id"));
                     t.setDescricao(rs.getString("descricao"));
                     t.setValor(rs.getDouble("valor"));
                     t.setTipo(rs.getString("tipo"));
                     t.setCategoria(rs.getString("categoria"));
-                    t.setData(rs.getDate("data_criacao").toLocalDate());
-                    
+                    t.setData(rs.getObject("data_criacao", LocalDate.class));
+
                     transacoes.add(t);
                 }
             }
@@ -203,7 +204,7 @@ public class TransacaoDAO {
             return linhasAfetadas > 0;
         }
     }
-    
+
     public ResumoFinanceiro obterResumo() throws Exception {
         ResumoFinanceiro resumo = new ResumoFinanceiro();
 
