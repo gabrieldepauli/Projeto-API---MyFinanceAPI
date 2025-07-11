@@ -1,0 +1,13 @@
+{ 
+	"chain": [
+		"controller.handlers.GetTransacoesHandler",
+		"controller.handlers.InserirTransacaoHandler",
+		"controller.handlers.DeletarTransacaoHandler",
+		"controller.handlers.GetTransacaoPorIdHandler",
+		"controller.handlers.GetTransacaoPorTipoHandler",
+		"controller.handlers.GetTransacaoPorCategoriaHandler",
+		"controller.handlers.AtualizarTransacaoHandler",
+		"controller.handlers.GetTransacaoPorCategoriaETipoHandler",
+		"controller.handlers.ObterResumoHandler"
+	]
+}
