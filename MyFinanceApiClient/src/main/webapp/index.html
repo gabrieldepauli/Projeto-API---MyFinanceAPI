@@ -1,104 +1,154 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Histórico de Transações - MyFinance</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Histórico de Transações - MyFinance</title>
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-  <link rel="stylesheet" href="css/style.css" />
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+	rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-light">
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
-    <div class="container">
-      <a class="navbar-brand" href="#">MyFinance</a>
-    </div>
-  </nav>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+		<div class="container">
+			<a class="navbar-brand" href="#">MyFinance</a>
+		</div>
+	</nav>
 
-  <div class="container">
+	<div class="container">
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2>Histórico de Transações</h2>
-      <a href="nova.html" class="btn btn-success">+ Nova Transação</a>
-    </div>
+		<div class="d-flex justify-content-between align-items-center mb-3">
+			<h2>Histórico de Transações</h2>
+			<a href="nova.html" class="btn btn-success">+ Nova Transação</a>
+		</div>
 
-    <div class="table-responsive">
-      <table class="table table-bordered table-hover bg-white" id="transactionsTable">
-        <thead class="table-primary">
-          <tr>
-            <th>ID</th>
-            <th>Descrição</th>
-            <th>Valor (R$)</th>
-            <th>Tipo</th>
-            <th>Categoria</th>
-            <th>Data</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="transactionsTableBody">
-        </tbody>
-      </table>
-    </div>
+		<div class="row mb-3">
+			<div class="col-md-6">
+				<label for="filtroCategoria" class="form-label">Filtrar por Categoria:</label>
+				<select id="filtroCategoria" class="form-select">
+					<option value="">Todas</option>
+				</select>
+			</div>
+			<div class="col-md-6">
+				<label for="filtroTipo" class="form-label">Filtrar por Tipo:</label>
+				<select id="filtroTipo" class="form-select">
+					<option value="">Todos</option>
+					<option value="receita">Receita</option>
+					<option value="despesa">Despesa</option>
+				</select>
+			</div>
+		</div>
 
-    <hr class="my-4" />
+		<div class="table-responsive">
+			<table class="table table-bordered table-hover bg-white" id="transactionsTable">
+				<thead class="table-primary">
+					<tr>
+						<th>ID</th>
+						<th>Descrição</th>
+						<th>Valor (R$)</th>
+						<th>Tipo</th>
+						<th>Categoria</th>
+						<th>Data</th>
+						<th>Ações</th>
+					</tr>
+				</thead>
+				<tbody id="transactionsTableBody"></tbody>
+			</table>
+		</div>
 
-    <h3>Resumo Financeiro</h3>
+		<div class="d-flex justify-content-between align-items-center mt-3">
+			<button id="prevPageBtn" class="btn btn-outline-primary">Anterior</button>
+			<span>Página <span id="paginaAtual">1</span></span>
+			<button id="nextPageBtn" class="btn btn-outline-primary">Próxima</button>
+		</div>
+
+		<hr class="my-4" />
+
+		<h3>Resumo Financeiro</h3>
+		<div class="row mb-4">
+			<div class="col-md-4">
+				<div class="card text-white bg-success mb-3">
+					<div class="card-header">Total Receitas</div>
+					<div class="card-body">
+						<h4 id="totalReceitas">R$ 0,00</h4>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card text-white bg-danger mb-3">
+					<div class="card-header">Total Despesas</div>
+					<div class="card-body">
+						<h4 id="totalDespesas">R$ 0,00</h4>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card bg-light mb-3 border">
+					<div class="card-header">Saldo Atual</div>
+					<div class="card-body">
+						<h4 id="saldoAtual" class="fw-bold">R$ 0,00</h4>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6">
+				<h5>Receitas por Categoria</h5>
+				<ul id="receitasPorCategoriaList" class="list-group"></ul>
+			</div>
+			<div class="col-md-6">
+				<h5>Despesas por Categoria</h5>
+				<ul id="despesasPorCategoriaList" class="list-group"></ul>
+			</div>
+		</div>
+
+		<hr class="my-4" />
+		<h3>Gráficos</h3>
+		<div class="row mb-4">
+			<div class="col-md-6 mb-4">
+				<canvas id="graficoPizzaReceitaDespesa"></canvas>
+			</div>
+			<div class="col-md-6 mb-4">
+				<canvas id="graficoBarrasPorCategoria"></canvas>
+			</div>
+		</div>
 
     <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="card text-white bg-success mb-3">
-          <div class="card-header">Total Receitas</div>
-          <div class="card-body">
-            <h4 id="totalReceitas">R$ 0,00</h4>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card text-white bg-danger mb-3">
-          <div class="card-header">Total Despesas</div>
-          <div class="card-body">
-            <h4 id="totalDespesas">R$ 0,00</h4>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card bg-light mb-3 border">
-          <div class="card-header">Saldo Atual</div>
-          <div class="card-body">
-            <h4 id="saldoAtual" class="fw-bold">R$ 0,00</h4>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-
-      <div class="col-md-6">
+      <div class="col-md-6 mb-4">
         <h5>Receitas por Categoria</h5>
-        <ul id="receitasPorCategoriaList" class="list-group"></ul>
+        <canvas id="graficoPizzaReceitasPorCategoria"></canvas>
       </div>
-
-      <div class="col-md-6">
+      <div class="col-md-6 mb-4">
         <h5>Despesas por Categoria</h5>
-        <ul id="despesasPorCategoriaList" class="list-group"></ul>
+        <canvas id="graficoPizzaDespesasPorCategoria"></canvas>
       </div>
-
     </div>
 
-  </div>
+	</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-  <script>
+	<script>
     const API_BASE_URL = "http://localhost:8080/MyFinanceAPI/transacoes";
+    let paginaAtual = 0;
+    const tamanhoPagina = 10;
+    let totalItens = 0;
+
+    const filtroCategoria = document.getElementById("filtroCategoria");
+    const filtroTipo = document.getElementById("filtroTipo");
+
+    let graficoPizza, graficoBarras, graficoPizzaReceitasCat, graficoPizzaDespesasCat;
 
     function formatarDataBR(dataISO) {
       if (!dataISO) return "";
-      const [ano, mes, dia] = dataISO.split("-");
-      const d = new Date(ano, mes - 1, dia);
-      return d.toLocaleDateString("pt-BR");
+      const data = new Date(dataISO + "T00:00:00");
+      return data.toLocaleDateString("pt-BR");
     }
 
     function formatarValor(valor) {
@@ -142,17 +192,69 @@
 
         tbody.appendChild(tr);
       });
+
+      document.getElementById("paginaAtual").textContent = paginaAtual + 1;
+    }
+
+    async function carregarCategorias() {
+    	  try {
+    		const res = await fetch("http://localhost:8080/MyFinanceAPI/transacoes/categorias");
+    	    if (!res.ok) throw new Error("Erro ao carregar categorias");
+    	    const categorias = await res.json();
+
+    	    filtroCategoria.innerHTML = '<option value="">Todas</option>';
+
+    	    categorias.forEach(cat => {
+    	      const option = document.createElement("option");
+    	      option.value = cat;
+    	      option.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+    	      filtroCategoria.appendChild(option);
+    	    });
+    	  } catch (error) {
+    	    alert("Erro ao carregar categorias: " + error.message);
+    	  }
     }
 
     async function carregarTransacoes() {
       try {
-        const res = await fetch(`${API_BASE_URL}/paginated?page=0`);
+        let url = "";
+        const categoria = filtroCategoria.value;
+        const tipo = filtroTipo.value;
+
+        if (categoria && tipo) {
+          url = `${API_BASE_URL}/categoriaetipo/${categoria}+${tipo}?page=${paginaAtual}`;
+        } else if (categoria) {
+          url = `${API_BASE_URL}/categoria/${categoria}?page=${paginaAtual}`;
+        } else if (tipo) {
+          url = `${API_BASE_URL}/tipo/${tipo}?page=${paginaAtual}`;
+        } else {
+          url = `${API_BASE_URL}/paginated?page=${paginaAtual}`;
+        }
+
+        const res = await fetch(url);
         if (!res.ok) throw new Error("Erro ao carregar transações");
         const dados = await res.json();
-        exibirTransacoes(dados);
+
+        totalItens = dados.totalItens || 0;
+        const transacoes = dados.transacoes || [];
+
+        if (transacoes.length === 0 && paginaAtual > 0) {
+          paginaAtual--;
+          carregarTransacoes();
+          return;
+        }
+
+        exibirTransacoes(transacoes);
+        atualizarBotoesPaginacao();
       } catch (error) {
         alert("Erro: " + error.message);
       }
+    }
+
+    function atualizarBotoesPaginacao() {
+      document.getElementById("prevPageBtn").disabled = paginaAtual === 0;
+      const totalPaginas = Math.ceil(totalItens / tamanhoPagina);
+      document.getElementById("nextPageBtn").disabled = paginaAtual >= totalPaginas - 1;
     }
 
     async function carregarResumo() {
@@ -185,12 +287,152 @@
           li.textContent = `${cat}: ${formatarValor(val)}`;
           despesasLista.appendChild(li);
         }
+
+        criarGraficos(dados);
+
       } catch (error) {
         alert("Erro ao carregar resumo: " + error.message);
       }
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
+    function criarGraficos(dadosResumo) {
+      const { totalReceitas, totalDespesas, receitasPorCategoria, despesasPorCategoria } = dadosResumo;
+
+      const ctxPizza = document.getElementById('graficoPizzaReceitaDespesa').getContext('2d');
+      if (graficoPizza) graficoPizza.destroy();
+      graficoPizza = new Chart(ctxPizza, {
+        type: 'pie',
+        data: {
+          labels: ['Receitas', 'Despesas'],
+          datasets: [{
+            data: [totalReceitas, totalDespesas],
+            backgroundColor: ['#198754', '#dc3545']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom' }
+          }
+        }
+      });
+
+      const ctxBarras = document.getElementById('graficoBarrasPorCategoria').getContext('2d');
+
+      const categorias = [...new Set([
+        ...Object.keys(receitasPorCategoria || {}),
+        ...Object.keys(despesasPorCategoria || {})
+      ])];
+
+      const valoresReceita = categorias.map(cat => receitasPorCategoria[cat] || 0);
+      const valoresDespesa = categorias.map(cat => despesasPorCategoria[cat] || 0);
+
+      if (graficoBarras) graficoBarras.destroy();
+      graficoBarras = new Chart(ctxBarras, {
+        type: 'bar',
+        data: {
+          labels: categorias,
+          datasets: [
+            {
+              label: 'Receitas',
+              data: valoresReceita,
+              backgroundColor: '#198754'
+            },
+            {
+              label: 'Despesas',
+              data: valoresDespesa,
+              backgroundColor: '#dc3545'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+
+      const ctxPizzaReceitasCat = document.getElementById('graficoPizzaReceitasPorCategoria').getContext('2d');
+      if (graficoPizzaReceitasCat) graficoPizzaReceitasCat.destroy();
+      const labelsReceitas = Object.keys(receitasPorCategoria || {});
+      const dadosReceitas = Object.values(receitasPorCategoria || {});
+      graficoPizzaReceitasCat = new Chart(ctxPizzaReceitasCat, {
+        type: 'pie',
+        data: {
+          labels: labelsReceitas,
+          datasets: [{
+            data: dadosReceitas,
+            backgroundColor: gerarCores(labelsReceitas.length)
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom' }
+          }
+        }
+      });
+
+      const ctxPizzaDespesasCat = document.getElementById('graficoPizzaDespesasPorCategoria').getContext('2d');
+      if (graficoPizzaDespesasCat) graficoPizzaDespesasCat.destroy();
+      const labelsDespesas = Object.keys(despesasPorCategoria || {});
+      const dadosDespesas = Object.values(despesasPorCategoria || {});
+      graficoPizzaDespesasCat = new Chart(ctxPizzaDespesasCat, {
+        type: 'pie',
+        data: {
+          labels: labelsDespesas,
+          datasets: [{
+            data: dadosDespesas,
+            backgroundColor: gerarCores(labelsDespesas.length)
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom' }
+          }
+        }
+      });
+    }
+
+    function gerarCores(qtd) {
+      const coresBase = [
+        '#007bff', '#28a745', '#dc3545', '#ffc107', '#17a2b8',
+        '#6f42c1', '#fd7e14', '#20c997', '#6610f2', '#e83e8c'
+      ];
+      let cores = [];
+      for(let i = 0; i < qtd; i++) {
+        cores.push(coresBase[i % coresBase.length]);
+      }
+      return cores;
+    }
+
+    document.getElementById("prevPageBtn").addEventListener("click", () => {
+      if (paginaAtual > 0) {
+        paginaAtual--;
+        carregarTransacoes();
+      }
+    });
+
+    document.getElementById("nextPageBtn").addEventListener("click", () => {
+      const totalPaginas = Math.ceil(totalItens / tamanhoPagina);
+      if (paginaAtual < totalPaginas - 1) {
+        paginaAtual++;
+        carregarTransacoes();
+      }
+    });
+
+    filtroCategoria.addEventListener("change", () => {
+      paginaAtual = 0;
+      carregarTransacoes();
+    });
+
+    filtroTipo.addEventListener("change", () => {
+      paginaAtual = 0;
+      carregarTransacoes();
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      carregarCategorias(); 
       carregarTransacoes();
       carregarResumo();
     });

@@ -10,7 +10,9 @@ import util.LocalDateAdapter;
 
 import java.io.PrintWriter;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ListarTransacoesPelaCategoriaCommand implements Command {
 
@@ -24,23 +26,37 @@ public class ListarTransacoesPelaCategoriaCommand implements Command {
         }
 
         String categoria = path.substring("/categoria/".length());
+        int pagina = 0;
 
-        TransacaoDAO dao = new TransacaoDAO();
-        List<Transacao> transacoes = dao.buscarPorCategoria(categoria);
-
-        if (transacoes == null || transacoes.isEmpty()) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Nenhuma transação com essa categoria.");
-            return;
+        String paginaParam = request.getParameter("page");
+        if (paginaParam != null) {
+            try {
+                pagina = Integer.parseInt(paginaParam);
+                if (pagina < 0) pagina = 0;
+            } catch (NumberFormatException ignored) {}
         }
 
+        TransacaoDAO dao = new TransacaoDAO();
+        List<Transacao> transacoes = dao.buscarPorCategoria(categoria, pagina);
+        int totalTransacoes = dao.contarPorCategoria(categoria);
+        int totalPaginas = (int) Math.ceil((double) totalTransacoes / 10);
+
+        Map<String, Object> resposta = new HashMap<>();
+        resposta.put("transacoes", transacoes);
+        resposta.put("paginaAtual", pagina);
+        resposta.put("totalPaginas", totalPaginas);
+
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
-                .create();
+            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+            .create();
 
         response.setContentType("application/json");
-        PrintWriter out = response.getWriter();
-        out.print(gson.toJson(transacoes));
-        out.flush();
+        response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpServletResponse.SC_OK);
+
+        PrintWriter out = response.getWriter();
+        out.print(gson.toJson(resposta));
+        out.flush();
     }
 }
+

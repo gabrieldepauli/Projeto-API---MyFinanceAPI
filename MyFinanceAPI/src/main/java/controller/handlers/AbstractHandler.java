@@ -13,6 +13,8 @@ public abstract class AbstractHandler implements Handler {
 
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		System.out.println(this.getClass().getSimpleName() + " handle chamado. PathInfo: " + request.getPathInfo());
+		
 		if (canHandle(request)) {
 			process(request, response);
 		} else if (next != null) {

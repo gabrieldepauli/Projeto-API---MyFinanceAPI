@@ -14,18 +14,17 @@ import java.util.List;
 
 public class ListarTransacoesCommand implements Command {
 
-	private static final int DEFAULT_PAGE = 0;
-	
+    private static final int DEFAULT_PAGE = 0;
+
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        int pagina = 0;
-        String paginaStr = request.getParameter("pagina");
+        int pagina = DEFAULT_PAGE;
+        String paginaStr = request.getParameter("page");
 
         if (paginaStr != null && !paginaStr.isEmpty()) {
             try {
                 pagina = Integer.parseInt(paginaStr);
-                
-                if (pagina < 0) { 
+                if (pagina < 0) {
                     pagina = DEFAULT_PAGE;
                 }
             } catch (NumberFormatException e) {
@@ -35,14 +34,20 @@ public class ListarTransacoesCommand implements Command {
 
         TransacaoDAO dao = new TransacaoDAO();
         List<Transacao> transacoes = dao.listar(pagina);
+        int totalItens = dao.contarTotalTransacoes();
 
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
                 .create();
+        
+        var resposta = new java.util.HashMap<String, Object>();
+        resposta.put("transacoes", transacoes);
+        resposta.put("totalItens", totalItens);
 
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
-        out.print(gson.toJson(transacoes));
+        out.print(gson.toJson(resposta));
         out.flush();
     }
+    
 }

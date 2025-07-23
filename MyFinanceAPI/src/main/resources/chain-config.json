@@ -8,6 +8,7 @@
 		"controller.handlers.GetTransacaoPorCategoriaHandler",
 		"controller.handlers.AtualizarTransacaoHandler",
 		"controller.handlers.GetTransacaoPorCategoriaETipoHandler",
-		"controller.handlers.ObterResumoHandler"
+		"controller.handlers.ObterResumoHandler",
+		"controller.handlers.GetCategoriasHandler"
 	]
 }

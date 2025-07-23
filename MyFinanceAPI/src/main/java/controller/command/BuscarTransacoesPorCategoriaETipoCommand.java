@@ -10,7 +10,9 @@ import util.LocalDateAdapter;
 
 import java.io.PrintWriter;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BuscarTransacoesPorCategoriaETipoCommand implements Command {
 
@@ -36,14 +38,24 @@ public class BuscarTransacoesPorCategoriaETipoCommand implements Command {
         String categoria = parts[0];
         String tipo = parts[1];
 
-        TransacaoDAO dao = new TransacaoDAO();
-        List<Transacao> transacoes = dao.buscarPorTipoECategoria(tipo, categoria);
-
-        if (transacoes == null || transacoes.isEmpty()) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND,
-                "Nenhuma transação encontrada para a categoria '" + categoria + "' e tipo '" + tipo + "'.");
-            return;
+        int pagina = 0;
+        String paginaParam = request.getParameter("page");
+        if (paginaParam != null) {
+            try {
+                pagina = Integer.parseInt(paginaParam);
+                if (pagina < 0) pagina = 0;
+            } catch (NumberFormatException ignored) {}
         }
+
+        TransacaoDAO dao = new TransacaoDAO();
+        List<Transacao> transacoes = dao.buscarPorTipoECategoria(tipo, categoria, pagina);
+        int totalTransacoes = dao.contarPorTipoECategoria(tipo, categoria);
+        int totalPaginas = (int) Math.ceil((double) totalTransacoes / 10);
+
+        Map<String, Object> resposta = new HashMap<>();
+        resposta.put("transacoes", transacoes);
+        resposta.put("paginaAtual", pagina);
+        resposta.put("totalPaginas", totalPaginas);
 
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
@@ -52,7 +64,7 @@ public class BuscarTransacoesPorCategoriaETipoCommand implements Command {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
-        out.print(gson.toJson(transacoes));
+        out.print(gson.toJson(resposta));
         out.flush();
         response.setStatus(HttpServletResponse.SC_OK);
     }

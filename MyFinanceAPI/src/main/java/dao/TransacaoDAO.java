@@ -102,26 +102,26 @@ public class TransacaoDAO {
         return transacao;
     }
 
-    public List<Transacao> buscarPorCategoria(String categoria) throws SQLException {
+    public List<Transacao> buscarPorCategoria(String categoria, int pagina) throws SQLException {
         List<Transacao> transacoes = new ArrayList<>();
-        String sql = "SELECT * FROM Transacoes WHERE categoria = ? ORDER BY id DESC";
+        String sql = "SELECT * FROM Transacoes WHERE categoria = ? ORDER BY id DESC LIMIT ? OFFSET ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, categoria);
+            stmt.setInt(2, quantidadePorPagina);
+            stmt.setInt(3, quantidadePorPagina * pagina);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Transacao t = new Transacao();
-
                     t.setId(rs.getInt("id"));
                     t.setDescricao(rs.getString("descricao"));
                     t.setValor(rs.getDouble("valor"));
                     t.setTipo(rs.getString("tipo"));
                     t.setCategoria(rs.getString("categoria"));
                     t.setData(rs.getObject("data_criacao", LocalDate.class));
-
                     transacoes.add(t);
                 }
             }
@@ -130,26 +130,26 @@ public class TransacaoDAO {
         return transacoes;
     }
 
-    public List<Transacao> buscarPorTipo(String tipo) throws SQLException {
+    public List<Transacao> buscarPorTipo(String tipo, int pagina) throws SQLException {
         List<Transacao> transacoes = new ArrayList<>();
-        String sql = "SELECT * FROM Transacoes WHERE tipo = ? ORDER BY id DESC";
+        String sql = "SELECT * FROM Transacoes WHERE tipo = ? ORDER BY id DESC LIMIT ? OFFSET ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, tipo);
+            stmt.setInt(2, quantidadePorPagina);
+            stmt.setInt(3, quantidadePorPagina * pagina);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Transacao t = new Transacao();
-
                     t.setId(rs.getInt("id"));
                     t.setDescricao(rs.getString("descricao"));
                     t.setValor(rs.getDouble("valor"));
                     t.setTipo(rs.getString("tipo"));
                     t.setCategoria(rs.getString("categoria"));
                     t.setData(rs.getObject("data_criacao", LocalDate.class));
-
                     transacoes.add(t);
                 }
             }
@@ -158,27 +158,27 @@ public class TransacaoDAO {
         return transacoes;
     }
 
-    public List<Transacao> buscarPorTipoECategoria(String tipo, String categoria) throws SQLException {
+    public List<Transacao> buscarPorTipoECategoria(String tipo, String categoria, int pagina) throws SQLException {
         List<Transacao> transacoes = new ArrayList<>();
-        String sql = "SELECT * FROM Transacoes WHERE tipo = ? AND categoria = ? ORDER BY id DESC";
+        String sql = "SELECT * FROM Transacoes WHERE tipo = ? AND categoria = ? ORDER BY id DESC LIMIT ? OFFSET ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, tipo);
             stmt.setString(2, categoria);
+            stmt.setInt(3, quantidadePorPagina);
+            stmt.setInt(4, quantidadePorPagina * pagina);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Transacao t = new Transacao();
-
                     t.setId(rs.getInt("id"));
                     t.setDescricao(rs.getString("descricao"));
                     t.setValor(rs.getDouble("valor"));
                     t.setTipo(rs.getString("tipo"));
                     t.setCategoria(rs.getString("categoria"));
                     t.setData(rs.getObject("data_criacao", LocalDate.class));
-
                     transacoes.add(t);
                 }
             }
@@ -255,5 +255,86 @@ public class TransacaoDAO {
 
         return resumo;
     }
+    
+    public List<String> listarCategorias() throws SQLException {
+        List<String> categorias = new ArrayList<>();
+        String sql = "SELECT DISTINCT categoria FROM Transacoes ORDER BY categoria";
 
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            
+        	while (rs.next()) {
+                categorias.add(rs.getString("categoria"));
+            }
+        }
+        
+        return categorias;
+    }
+    
+    public int contarTotalTransacoes() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Transacoes";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    } 
+    
+    public int contarPorCategoria(String categoria) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Transacoes WHERE categoria = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, categoria);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
+
+    public int contarPorTipo(String tipo) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Transacoes WHERE tipo = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, tipo);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
+
+    public int contarPorTipoECategoria(String tipo, String categoria) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Transacoes WHERE tipo = ? AND categoria = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, tipo);
+            stmt.setString(2, categoria);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }    
+ 
 }
