@@ -43,4 +43,4 @@ A documentação completa com os endpoints, métodos, parâmetros e exemplos pod
 
 Clique na imagem para assistir!
 
-[![Assista ao vídeo](https://img.youtube.com/vi/G6K-r6ayrNA/maxresdefault.jpg)](https://youtu.be/G6K-r6ayrNA)
+[![Assista ao vídeo](https://img.youtube.com/vi/e0fJw26WLrs/maxresdefault.jpg)](https://youtu.be/e0fJw26WLrs)
